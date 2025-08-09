@@ -55,14 +55,14 @@ cp .env.example .env
 **5. How to Use:**
 With your conda environment active:
 
-    1. Navigate to the src directory:
+1. Navigate to the src directory:
     ```bash```
     cd src
 
-    2.Run the application:
+2. Run the application:
     ```bash```
-    python app.py
+    python -m src.app
 
-    3.Open your web browser and go to the local URL provided by Gradio (usually http://127.0.0.1:7860)
+3. Open your web browser and go to the local URL provided by Gradio (usually http://127.0.0.1:7860)
 
-# You can now upload your audio files and begin analysis.
+## You can now upload your audio files and begin analysis.
