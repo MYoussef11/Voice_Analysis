@@ -13,7 +13,7 @@ APP_DESCRIPTION = (
 )
 
 # Model Configuration
-MODEL_PROVIDER = "local"  # Set to 'local' or 'openai'
+MODEL_PROVIDER = "openai"  # Set to 'local' or 'openai'
 
 # Local model settings (if MODEL_PROVIDER is 'local')
 LOCAL_TRANSCRIPTION_MODEL = "openai/whisper-base.en" 
@@ -28,7 +28,7 @@ OPENAI_ANALYSIS_MODEL = "gpt-3.5-turbo"
 # Maximum file size in megabytes (MB)
 MAX_FILE_SIZE_MB = 25 
 # Maximum audio duration in minutes
-MAX_FILE_LENGTH_MINS = 10
+MAX_FILE_LENGTH_MINS = 15
 # List of allowed audio file extensions (add more as needed)
 ALLOWED_FILE_EXTENSIONS = [".mp3", ".wav", ".m4a", ".flac", ".ogg"]
 
