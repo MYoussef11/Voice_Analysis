@@ -18,6 +18,7 @@ class ProcessingController:
         self.analysis_service = AnalysisService()
         self.validator = Validator()
         self.transcript: str | None = None
+        self.chat_history: list = []
         logger.info("ProcessingController initialized.")
 
     def process_audio_file(self, file_path: str):
@@ -34,6 +35,7 @@ class ProcessingController:
         try:
             # Reset state for a new file
             self.transcript = None
+            self.chat_history = []
             logger.info(f"Starting processing for audio file: {file_path}")
 
             # 1. Validate the file
@@ -94,5 +96,9 @@ class ProcessingController:
             raise AppError("Question cannot be empty.")
             
         logger.info(f"Question received from user: '{question}'")
-        return self.analysis_service.answer_question(self.transcript, question)
+        # The entire history to the analysis service
+        response = self.analysis_service.answer_question(self.transcript, question, self.chat_history)
+        # Update history with the new turn
+        self.chat_history.append([question, response])
+        return response
     

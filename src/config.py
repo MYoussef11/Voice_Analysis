@@ -13,7 +13,7 @@ APP_DESCRIPTION = (
 )
 
 # Model Configuration
-MODEL_PROVIDER = "openai"  # Set to 'local' or 'openai'
+MODEL_PROVIDER = "local"  # Set to 'local' or 'openai'
 
 # Local model settings (if MODEL_PROVIDER is 'local')
 LOCAL_TRANSCRIPTION_MODEL = "openai/whisper-base.en" 

@@ -105,7 +105,11 @@ class AnalysisService:
         logger.info("Sentiment analysis task requested.")
         prompt = f"""
         Analyze the sentiment of the following text.
-        You must respond with only one word: Positive, Negative, or Neutral.
+        Your response must have two parts:
+        1.  **Sentiment:** Classify the sentiment as Positive, Negative, or Neutral.
+        2.  **Justification:** Briefly explain why you chose that sentiment, referencing key words or phrases from the text.
+
+        Format your response clearly using Markdown.
 
         Text:
         ---
@@ -115,26 +119,30 @@ class AnalysisService:
         """
         return self._analyze(prompt)
 
-    def answer_question(self, text: str, question: str) -> str:
+    def answer_question(self, text: str, question: str, chat_history: list) -> str:
         """
         Answers a question based on the provided text.
         """
         logger.info(f"Q&A task requested for question: '{question}'")
+        # Format the chat history for the prompt
+        formatted_history = "\n".join([f"User: {q}\nAssistant: {a}" for q, a in chat_history])
         
         prompt = f"""
-       You are a helpful Q&A assistant. Your task is to answer the user's question based *only* on the context provided in the text transcript below.
-
-        **Rules:**
-        1. Read the question and the transcript carefully.
-        2. If the answer is directly stated or can be reasonably inferred from the text, provide a clear and concise answer.
-        3. If the answer is NOT in the transcript, you **MUST** respond with the exact sentence: 'This question cannot be answered based on the content of the uploaded file.'
-        4. Do not add any other words, apologies, or explanations.
+        You are a machine. You are a Q&A engine that answers questions about a document.
+        You MUST follow these rules strictly:
+        1. Use the "Conversation History" to understand the user's question, especially for follow-ups.
+        2. Find the answer to the user's "New User Question" using ONLY the "Document Transcript".
+        3. If the answer is not in the transcript, you MUST ONLY respond with the exact phrase: 'That information is not available in the provided document.'
+        4. Do not apologize. Do not explain your reasoning. Do not add any other words.
 
         ---
-        **Transcript:**
+        **DOCUMENT TRANSCRIPT:**
         {text}
         ---
-        **User's Question:**
+        **CONVERSATION HISTORY:**
+        {formatted_history}
+        ---
+        **NEW USER QUESTION:**
         {question}
         """
         
