@@ -66,7 +66,7 @@ class Validator:
         # 4. Validate file duration
         try:
             audio = AudioSegment.from_file(file_path)
-            duration_mins = len(audio) / (1000 * 60)
+            duration_mins = audio.duration_seconds / 60
             if duration_mins > config.MAX_FILE_LENGTH_MINS:
                 logger.warning(
                     f"Validation failed: Duration {duration_mins:.2f} mins exceeds "
