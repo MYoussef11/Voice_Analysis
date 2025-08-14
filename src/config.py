@@ -14,6 +14,8 @@ APP_DESCRIPTION = (
 
 # Model Configuration
 MODEL_PROVIDER = "local"  # Set to 'local' or 'openai'
+OLLAMA_HOST = os.getenv("OLLAMA_HOST", "localhost") # Default to localhost if not set
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3") # Default model for Ollama
 
 # Local model settings (if MODEL_PROVIDER is 'local')
 LOCAL_TRANSCRIPTION_MODEL = "openai/whisper-base.en" 

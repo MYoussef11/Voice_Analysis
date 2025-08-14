@@ -143,5 +143,6 @@ with gr.Blocks(theme=gr.themes.Default(), css="footer {visibility: hidden}", tit
 if __name__ == "__main__":
     logger.info("Starting Gradio application...")
     demo.launch(
-        #share=True
+        #share=True,
+        server_name="0.0.0.0",
     )
