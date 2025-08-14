@@ -1,4 +1,4 @@
-import requests
+import ollama
 from openai import OpenAI, OpenAIError
 from src import config
 from src.utils.exceptions import AnalysisError, IrrelevantQuestionError
@@ -13,33 +13,33 @@ class AnalysisService:
 
     def _analyze_local(self, prompt: str) -> str:
         """
-        Generates a response by sending a request to the local Ollama server.
+        Generates a response by calling the local Ollama server using the host
+        address defined in the application's configuration.
         """
-        try:
-            logger.info("Sending analysis request to Ollama server.")
-            # NOTE: We assume the model 'phi' is running in Ollama.
-            # This can be changed to match the model you run with `ollama run ...`
-            response = requests.post(
-                "http://localhost:11434/api/generate",
-                json={
-                    "model": "llama3",
-                    "prompt": prompt,
-                    "stream": False  # We want the full response at once
-                },
-                timeout=300 # Add a timeout of 5 minutes
-            )
-            response.raise_for_status()  # Raise an exception for bad status codes (like 404 or 500)
-            
-            response_data = response.json()
-            logger.info("Ollama analysis successful.")
-            return response_data["response"].strip()
 
-        except requests.exceptions.ConnectionError:
-            logger.error("Could not connect to Ollama server. Is it running in a separate terminal?")
-            raise AnalysisError("Could not connect to the local Ollama server. Please ensure it is running.")
-        except requests.exceptions.RequestException as e:
+        # Read the configured host from config.py
+        ollama_host = config.OLLAMA_HOST
+        
+        try:
+            # Initialize the Ollama client with the determined host
+            client = ollama.Client(host=f"http://{ollama_host}:11434")
+            logger.info(f"Sending analysis request to Ollama server at {ollama_host}.")
+            
+            response = client.generate(
+                model=config.OLLAMA_MODEL,
+                prompt=prompt
+            )
+            
+            logger.info("Ollama analysis successful.")
+            return response['response'].strip()
+
+        except ollama.ResponseError as e:
+            logger.error(f"Ollama API error: {e.error}", exc_info=True)
+            raise AnalysisError(f"An error occurred with the Ollama API: {e.error}")
+        except Exception as e:
+            # Catch other potential issues like connection problems
             logger.error(f"Error during Ollama request: {e}", exc_info=True)
-            raise AnalysisError("An error occurred while communicating with the Ollama server.")
+            raise AnalysisError("An unexpected error occurred while communicating with the Ollama server.")
 
     def _analyze_openai(self, prompt: str) -> str:
         """

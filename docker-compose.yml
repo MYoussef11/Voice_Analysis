@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  # Service 1: Our Voice Analysis Application
+  app:
+    # Build the image using the Dockerfile in the current directory
+    build: .
+    # Expose the Gradio port
+    ports:
+      - "7860:7860"
+    # Set the environment variables for the application
+    environment:
+      # Define the Ollama host address
+      # This allows the application to connect to the Ollama server
+      - OLLAMA_HOST=ollama
+    # Make this service depend on the 'ollama' service
+    # This ensures that Ollama starts up before our application tries to connect to it
+    depends_on:
+      - ollama
+
+  # Service 2: The Ollama Server
+  ollama:
+    # Use the official Ollama Docker image
+    image: ollama/ollama
+    # Expose the Ollama API port so our 'app' service can reach it.
+    ports:
+      - "11434:11434"
+    # Set the environment variable to enable GPU support
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    # Mount a volume to persist Ollama data
+    # This allows Ollama to retain its state and models across container restarts
+    volumes:
+      - ollama_data:/root/.ollama
+
+volumes:
+  ollama_data:
